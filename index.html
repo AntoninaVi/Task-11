@@ -1,11 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task11</title>
+    <title>File Upload</title>
+
+    <link rel="stylesheet" href="/style.css">
 </head>
+
 <body>
-    
+
+    <div class="container">
+
+
+        <main class="main">
+            <div class="main-tabs">
+                <div class="tab active" data-tab="new-upload">New Upload</div>
+                <div class="tab" data-tab="recent">Recent</div>
+            </div>
+
+            <div class="tab-content" id="new-upload">
+                <div class="drop-zone" id="drop-zone">
+                    <p>Drag and drop files here or click to select files</p>
+                    <input type="file" id="file-input" multiple>
+                </div>
+                <div class="uploads" id="uploads">
+                    <p>No uploads yet</p>
+                </div>
+            </div>
+            <div class="tab-content hidden" id="recent">
+                <div class="uploads" id="recent-uploads">
+                    <p>Loading recent uploads...</p>
+                </div>
+                <button id="view-all-btn">View All Uploads</button>
+            </div>
+
+        </main>
+    </div>
+
+
+
+
+    <script type="module" src="/index.js"></script>
 </body>
+
 </html>
