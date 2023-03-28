@@ -1,171 +1,277 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-import { getStorage } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-storage.js";
+// // Initialize Firebase
+// firebase.initializeApp({
+//     // Your Firebase configuration
+//   });
 
-
-
-
-
-const firebaseConfig = {
-    apiKey: "AIzaSyD5nW8Ip_gj19APEBhnDujJ_ypVbSz5G9U",
-    authDomain: "fileupload-f9ce5.firebaseapp.com",
-    projectId: "fileupload-f9ce5",
-    storageBucket: "fileupload-f9ce5.appspot.com",
-    messagingSenderId: "901077492180",
-    appId: "1:901077492180:web:539de11ec98e2dd78bf641"
-};
-
-
-//  Firebase
-const app = initializeApp(firebaseConfig);
-const storage = getStorage(app);
-//   const storageRef = storage.ref();
-
-function downloadFileFromStorage(fileName) {
-    const storageRef = storage.ref();
-    const fileRef = storageRef.child(fileName);
-    fileRef.getDownloadURL().then(function (url) {
-        // Отобразить файл на странице
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = fileName;
-        link.click();
-    }).catch(function (error) {
-        console.error('Error while downloading file:', error);
-    });
-}
-
-
-
-const newUploadTab = document.getElementById('new-upload');
-const recentTab = document.getElementById('recent');
-const fileInput = document.getElementById('file-input');
+// Get references to DOM elements
+const tabButtons = document.querySelectorAll('.tab');
+const tabContents = document.querySelectorAll('.tab-content');
 const dropZone = document.getElementById('drop-zone');
-const uploadsContainer = document.getElementById('uploads');
-const recentUploadsContainer = document.getElementById('recent-uploads');
-const viewAllBtn = document.getElementById('view-all-btn');
-
-let uploads = [];
+const fileInput = document.getElementById('file-input');
+const uploadsList = document.getElementById('uploads');
+const recentUploadsList = document.getElementById('recent-uploads');
+const viewAllButton = document.getElementById('view-all-btn');
 
 // Set up event listeners
-document.addEventListener('DOMContentLoaded', () => {
-    // Switching tabs
-    const tabs = document.querySelectorAll('.tab');
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            // Hide tab content
-            const tabContents = document.querySelectorAll('.tab-content');
-            tabContents.forEach(tabContent => {
-                tabContent.classList.add('hidden');
-            });
-            // Show tab content
-            const tabName = tab.getAttribute('data-tab');
-            const tabContent = document.getElementById(tabName);
-            tabContent.classList.remove('hidden');
-            //  Active tab
-            tabs.forEach(tab => {
-                tab.classList.remove('active');
-            });
-            tab.classList.add('active');
-        });
-    });
- 
-    fileInput.addEventListener('change', handleFilesSelect);
-    // Drop zone events
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropZone.addEventListener(eventName, preventDefault, false);
-    });
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dropZone.addEventListener(eventName, highlightDropZone, false);
-    });
-    ['dragleave', 'drop'].forEach(eventName => {
-        dropZone.addEventListener(eventName, unhighlightDropZone, false);
-    });
-    dropZone.addEventListener('drop', handleDrop, false);
-    // All uploads button click
-    viewAllBtn.addEventListener('click', showAllUploads);
-    // Recent uploads
-    loadRecentUploads();
-});
+tabButtons.forEach(button => button.addEventListener('click', handleTabClick));
+dropZone.addEventListener('dragover', handleDragOver);
+dropZone.addEventListener('dragleave', handleDragLeave);
+dropZone.addEventListener('drop', handleDrop);
+fileInput.addEventListener('change', handleFileSelect);
+viewAllButton.addEventListener('click', handleViewAll);
+//   getRecentUploads();
+// Show the New Upload tab by default
+showTab('new-upload');
 
+// Handle tab clicks
+function handleTabClick(event) {
+    const tab = event.target.dataset.tab;
+    showTab(tab);
+}
 
-function preventDefault(event) {
+// Show the specified tab and hide the others
+function showTab(tab) {
+    tabButtons.forEach(button => {
+        if (button.dataset.tab === tab) {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
+    });
+    tabContents.forEach(content => {
+        if (content.id === tab) {
+            content.classList.remove('hidden');
+        } else {
+            content.classList.add('hidden');
+        }
+    });
+}
+
+// Handle drag over events on the drop zone
+function handleDragOver(event) {
     event.preventDefault();
-    event.stopPropagation();
+    dropZone.classList.add('dragover');
 }
 
-
-function highlightDropZone() {
-    dropZone.classList.add('highlight');
+// Handle drag leave events on the drop zone
+function handleDragLeave(event) {
+    event.preventDefault();
+    dropZone.classList.remove('dragover');
 }
 
-
-function unhighlightDropZone() {
-    dropZone.classList.remove('highlight');
-}
-
-
-function handleFilesSelect(event) {
-    const files = event.target.files;
-    handleFiles(files);
-}
-
-
+// Handle drop events on the drop zone
 function handleDrop(event) {
+    event.preventDefault();
+    dropZone.classList.remove('dragover');
     const files = event.dataTransfer.files;
     handleFiles(files);
 }
 
+// Handle file select events on the file input
+function handleFileSelect(event) {
+    event.preventDefault();
+    const files = event.target.files;
+    handleFiles(files);
+}
 
+// Function to handle files
 function handleFiles(files) {
+    // Loop through the selected files
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        // Add file 
-        uploads.push({
+        // Check if the file is an image
+        if (!file.type.startsWith('image/')) {
+            alert('Only image files are allowed.');
+            continue;
+        }
+        // Add the file to the uploads list
+        addUploadToList(file);
+        // Upload the file to the database
+        uploadFile(file);
+    }
+    // Clear the file input
+    fileInput.value = '';
+}
+// Function to handle file selection from the drop zone
+function handleFileDrop(event) {
+    event.preventDefault();
+    const files = event.dataTransfer.files;
+    handleFiles(files);
+}
+
+// Function to add a file to the uploads list
+function addUploadToList(file) {
+    const uploadsList = document.getElementById('uploads');
+    const uploadItem = document.createElement('div');
+    uploadItem.className = 'upload-item';
+    const name = document.createElement('p');
+    name.innerHTML = file.name;
+    const size = document.createElement('p');
+    size.innerHTML = formatBytes(file.size);
+    const time = document.createElement('p');
+    time.innerHTML = formatDate(new Date());
+    uploadItem.appendChild(name);
+    uploadItem.appendChild(size);
+    uploadItem.appendChild(time);
+    uploadsList.appendChild(uploadItem);
+}
+
+// Function to format bytes to a human-readable string
+function formatBytes(bytes) {
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    if (bytes === 0) {
+        return '0 Bytes';
+    }
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + ' ' + sizes[i];
+}
+// Function to format a date to a string
+function formatDate(date) {
+    const options = {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+    };
+    return date.toLocaleDateString('en-US', options);
+}
+
+
+
+//   Storage
+// Function to upload a file to the database
+async function uploadFileToDatabase(file) {
+    // Create a reference to the storage location in Firebase
+    const storageRef = firebase.storage().ref().child(file.name);
+
+    try {
+        // Upload the file to the storage location
+        const snapshot = await storageRef.put(file);
+
+        // Get the download URL of the uploaded file
+        const downloadURL = await snapshot.ref.getDownloadURL();
+
+        // Save the file metadata to Firestore
+        await firebase.firestore().collection("uploads").add({
             name: file.name,
             size: file.size,
-            date: new Date().toLocaleString(),
-            file: file
+            created_at: new Date(),
+            downloadURL: downloadURL
         });
-        // Upload file to Firebase Storage
-        uploadFileToStorage(file);
-        // Add file to uploads 
-        const uploadElement = createUploadElement(file.name, file.size);
-        uploadsContainer.appendChild(uploadElement);
+
+        // Return the download URL of the uploaded file
+        return downloadURL;
+    } catch (error) {
+        console.error(error);
+        return null;
     }
 }
 
-// Upload file to Firebase Storage
-function uploadFileToStorage(file) {
-    const storageRef = storage.ref();
-    const fileRef = storageRef.child(file.name);
-    fileRef.put(file).then(function (snapshot) {
-        console.log('File uploaded successfully');
-    });
-}
+// Function to display a file in the Recent tab
+function displayFile(file) {
+    const recentUploads = document.querySelector("#recent-uploads");
 
-// Create upload element
-function createUploadElement(name, size) {
-    const uploadElement = document.createElement('div');
-    uploadElement.classList.add('upload');
-    const nameElement = document.createElement('p');
-    // nameElement.innerHTML = <span>Name: </span> ;
-    uploadElement.appendChild(nameElement);
-    const sizeElement = document.createElement('p');
-    // sizeElement.innerHTML = <span>Size: ${size} bytes</span>;
-    uploadElement.appendChild(sizeElement);
-    const dateElement = document.createElement('p');
-    // dateElement.innerHTML = <span>Date: ${new Date().toLocaleString()}</span> ;
-    uploadElement.appendChild(dateElement);
-    return uploadElement;
-}
+    // Create a new file element
+    const fileElem = document.createElement("div");
+    fileElem.classList.add("file");
 
-// Load recent uploads from Firebase 
-function loadRecentUploads() {
-    recentUploadsContainer.innerHTML = '';
-    for (let i = 0; i < uploads.length && i < 5; i++) {
-        const upload = uploads[i];
-        const uploadElement = createUploadElement(upload.name, upload.size);
-        recentUploadsContainer.appendChild(uploadElement);
+    // Add the file name to the element
+    const nameElem = document.createElement("p");
+    nameElem.classList.add("name");
+    nameElem.textContent = file.name;
+    fileElem.appendChild(nameElem);
+
+    // Add the file size to the element
+    const sizeElem = document.createElement("p");
+    sizeElem.classList.add("size");
+    sizeElem.textContent = formatFileSize(file.size);
+    fileElem.appendChild(sizeElem);
+
+    // Add the file upload time to the element
+    const timeElem = document.createElement("p");
+    timeElem.classList.add("time");
+    timeElem.textContent = formatTimeAgo(file.created_at);
+    fileElem.appendChild(timeElem);
+
+    // Add the file download button to the element
+    const downloadElem = document.createElement("a");
+    downloadElem.classList.add("download");
+    downloadElem.textContent = "Download";
+    downloadElem.href = file.downloadURL;
+    downloadElem.setAttribute("download", file.name);
+    fileElem.appendChild(downloadElem);
+
+    // Add the file element to the Recent uploads container
+    recentUploads.insertBefore(fileElem, recentUploads.firstChild);
+
+    // Remove the oldest file from the Recent uploads container
+    const fileElems = recentUploads.querySelectorAll(".file");
+    if (fileElems.length > 5) {
+        recentUploads.removeChild(fileElems[fileElems.length - 1]);
     }
 }
 
+// Function to format file size in human-readable format
+function formatFileSize(bytes) {
+    const units = ["B", "KB", "MB", "GB", "TB"];
+    let size = bytes;
+    let unitIndex = 0;
+    while (size >= 1024 && unitIndex < units.length - 1) {
+        size /= 1024;
+        unitIndex++;
+    }
+    return size.toFixed(1) + " " + units[unitIndex];
+}
+
+// Function to format time ago in human-readable format
+function formatTimeAgo(date) {
+    const elapsed = (new Date() - date) / 1000;
+    if (elapsed < 60) {
+        return Math.round(elapsed) + " seconds ago";
+    } else if (elapsed < 3600) {
+        return Math.round(elapsed / 60) + " minutes ago";
+    } else if (elapsed < 86400) {
+        return Math.round(elapsed / 3600) + " hours ago";
+    } else {
+        return Math.round(elapsed / 86400) + " days ago";
+    }
+}
+
+
+
+
+
+//   Show Uploads
+function handleViewAll() {
+    // Clear the uploads container
+    const uploadsContainer = document.querySelector("#uploads");
+    uploadsContainer.innerHTML = "";
+
+    // Show the "loading" message
+    const loadingMessage = document.createElement("p");
+    loadingMessage.textContent = "Loading uploads...";
+    uploadsContainer.appendChild(loadingMessage);
+
+    // Fetch all uploads from Firestore
+    db.collection("uploads")
+        .orderBy("timestamp", "desc")
+        .get()
+        .then((querySnapshot) => {
+            // Remove the "loading" message
+            uploadsContainer.innerHTML = "";
+
+            // Loop through each upload and create a new element for it
+            querySnapshot.forEach((doc) => {
+                const upload = doc.data();
+                const uploadElement = createUploadElement(upload);
+                uploadsContainer.appendChild(uploadElement);
+            });
+        })
+        .catch((error) => {
+            console.log(error);
+            uploadsContainer.innerHTML = "<p>Error loading uploads</p>";
+        });
+}
