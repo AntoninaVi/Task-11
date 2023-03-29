@@ -115,9 +115,8 @@ function handleFileDrop(event) {
     handleFiles(files);
 }
 
-// Function to add a file to uploads list
+// Function to add a file to the uploads list
 function addUploadToList(file) {
-    const uploadsList = document.getElementById('uploads');
     const uploadItem = document.createElement('div');
     uploadItem.className = 'upload-item';
     const name = document.createElement('p');
@@ -129,8 +128,15 @@ function addUploadToList(file) {
     uploadItem.appendChild(name);
     uploadItem.appendChild(size);
     uploadItem.appendChild(time);
-    uploadsList.appendChild(uploadItem);
+    // Add the file to the recent uploads list
+    recentUploadsList.insertBefore(uploadItem, recentUploadsList.firstChild);
+    // Remove the last item from the recent uploads list if it has more than 5 items
+    if (recentUploadsList.children.length > 5) {
+        recentUploadsList.removeChild(recentUploadsList.lastChild);
+    }
 }
+
+
 
 // Function to format bytes 
 function formatBytes(bytes) {
@@ -173,49 +179,7 @@ async function uploadFileToDatabase(file) {
 
 
 
-// Display a file in  Recent 
-function displayFile(file) {
-    const recentUploads = document.querySelector("#recent-uploads");
-
-
-    const fileElem = document.createElement("div");
-    fileElem.classList.add("file");
-
-
-    const nameElem = document.createElement("p");
-    nameElem.classList.add("name");
-    nameElem.textContent = file.name;
-    fileElem.appendChild(nameElem);
-
-    // size
-    const sizeElem = document.createElement("p");
-    sizeElem.classList.add("size");
-    sizeElem.textContent = formatFileSize(file.size);
-    fileElem.appendChild(sizeElem);
-
-    // time
-    const timeElem = document.createElement("p");
-    timeElem.classList.add("time");
-    timeElem.textContent = formatTimeAgo(file.created_at);
-    fileElem.appendChild(timeElem);
-
-    // download button
-    const downloadElem = document.createElement("a");
-    downloadElem.classList.add("download");
-    downloadElem.textContent = "Download";
-    downloadElem.href = file.downloadURL;
-    downloadElem.setAttribute("download", file.name);
-    fileElem.appendChild(downloadElem);
-
-    // Add file to Recent uploads container
-    recentUploads.insertBefore(fileElem, recentUploads.firstChild);
-
-    // Remove oldest file from Recent uploads container
-    const fileElems = recentUploads.querySelectorAll(".file");
-    if (fileElems.length > 5) {
-        recentUploads.removeChild(fileElems[fileElems.length - 1]);
-    }
-}
+// 
 
 // format file size 
 function formatFileSize(bytes) {
@@ -230,94 +194,61 @@ function formatFileSize(bytes) {
 }
 
 // format time ago 
-function formatTimeAgo(date) {
-    const elapsed = (new Date() - date) / 1000;
-    if (elapsed < 60) {
-        return Math.round(elapsed) + " seconds ago";
-    } else if (elapsed < 3600) {
-        return Math.round(elapsed / 60) + " minutes ago";
-    } else if (elapsed < 86400) {
-        return Math.round(elapsed / 3600) + " hours ago";
-    } else {
-        return Math.round(elapsed / 86400) + " days ago";
-    }
-}
-
-
-
-
-
-//   Show Uploads
-function handleViewAll() {
-  
-    const uploadsContainer = document.querySelector("#uploads");
-    uploadsContainer.innerHTML = "";
-
-   
-    const loadingMessage = document.createElement("p");
-    loadingMessage.textContent = "Loading uploads...";
-    uploadsContainer.appendChild(loadingMessage);
-
-    // Fetch all uploads from Firestore
-    getDocs(fileCollectionRef)
-        .then((querySnapshot) => {
-            // Remove the "loading" message
-            uploadsContainer.innerHTML = "";
-
- 
-            querySnapshot.forEach((doc) => {
-                const upload = doc.data();
-                // const uploadElement = createUploadElement(upload);
-                uploadsContainer.appendChild(uploadElement);
-            });
-        })
-        .catch((error) => {
-            console.log(error);
-            uploadsContainer.innerHTML = "<p>Error loading uploads</p>";
-        });
-}
-
-// function uploadFile(file) {
-//     // Create a new upload object
-//     const upload = {
-//         name: file.name,
-//         size: file.size,
-//         timestamp: new Date().getTime(),
-//     };
-
-//     // Add the upload to Firestore
-//     db.collection("uploads")
-//         .add(upload)
-//         .then((docRef) => {
-//             // Upload the file to Storage
-//             const storageRef = storage.ref().child(`uploads/${docRef.id}/${file.name}`);
-//             const uploadTask = storageRef.put(file);
-
-//             // Update the progress bar while the file is uploading
-//             uploadTask.on(
-//                 "state_changed",
-//                 (snapshot) => {
-//                     // Get the progress percentage
-//                     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-
-//                     // Update the progress bar
-//                     const progressBar = document.querySelector(`#upload-progress-${docRef.id}`);
-//                     if (progressBar) {
-//                         progressBar.style.width = `${progress}%`;
-//                     }
-//                 },
-//                 (error) => {
-//                     console.log(error);
-//                 },
-//                 () => {
-//                     // File uploaded successfully, update the UI
-//                     const uploadElement = createUploadElement(upload, docRef.id);
-//                     const uploadsContainer = document.querySelector("#uploads");
-//                     uploadsContainer.insertBefore(uploadElement, uploadsContainer.firstChild);
-//                 }
-//             );
-//         })
-//         .catch((error) => {
-//             console.log(error);
-//         });
+// function formatTimeAgo(date) {
+//     const elapsed = (new Date() - date) / 1000;
+//     if (elapsed < 60) {
+//         return Math.round(elapsed) + " seconds ago";
+//     } else if (elapsed < 3600) {
+//         return Math.round(elapsed / 60) + " minutes ago";
+//     } else if (elapsed < 86400) {
+//         return Math.round(elapsed / 3600) + " hours ago";
+//     } else {
+//         return Math.round(elapsed / 86400) + " days ago";
+//     }
 // }
+
+
+async function handleViewAll() {
+    // Get all files from the database
+    const querySnapshot = await getDocs(fileCollectionRef);
+    // Clear the recent uploads list
+    recentUploadsList.innerHTML = '';
+    // Loop through the files and add them to the uploads list
+    querySnapshot.forEach((doc) => {
+        const fileData = doc.data();
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+        const name = document.createElement('p');
+        name.innerHTML = fileData.name;
+        const size = document.createElement('p');
+        size.innerHTML = formatBytes(fileData.size);
+        const time = document.createElement('p');
+        time.innerHTML = formatDate(new Date(fileData.uploadTime));
+
+        fileItem.appendChild(name);
+        fileItem.appendChild(size);
+        fileItem.appendChild(time);
+        uploadsList.appendChild(fileItem);
+    });
+    // Hide the recent uploads list and show the uploads list
+    recentUploadsList.classList.add('hidden');
+    uploadsList.classList.remove('hidden');
+}
+
+
+
+function createUploadItem(upload) {
+    const uploadItem = document.createElement('div');
+    uploadItem.className = 'upload-item';
+    const name = document.createElement('p');
+    name.innerHTML = upload.name;
+    const size = document.createElement('p');
+    size.innerHTML = formatBytes(upload.size);
+    const time = document.createElement('p');
+    time.innerHTML = formatDate(upload.time.toDate());
+    uploadItem.appendChild(name);
+    uploadItem.appendChild(size);
+    uploadItem.appendChild(time);
+    return uploadItem;
+}
+
