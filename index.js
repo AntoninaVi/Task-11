@@ -1,6 +1,6 @@
 // Initialize Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.0/firebase-app.js";
-import { getFirestore, setDoc, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/9.9.0/firebase-firestore.js";
+import { getFirestore, orderBy ,query, setDoc, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/9.9.0/firebase-firestore.js";
 
 
 
@@ -38,6 +38,31 @@ viewAllButton.addEventListener('click', handleViewAll);
 //   getRecentUploads();
 // Show New by default
 showTab('new-upload');
+
+
+
+async function getRecentUploads() {
+    const q = query(collection(db, "files"), orderBy("date", "desc"));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      // Создайте элементы HTML для отображения файла
+      const uploadItem = document.createElement('div');
+      uploadItem.className = 'upload-item';
+      const name = document.createElement('p');
+      name.innerHTML = data.name;
+      const size = document.createElement('p');
+      size.innerHTML = formatBytes(data.size);
+      const time = document.createElement('p');
+      time.innerHTML = formatDate(data.date.toDate());
+      uploadItem.appendChild(name);
+      uploadItem.appendChild(size);
+      uploadItem.appendChild(time);
+      // Добавьте элемент в список последних загрузок
+      recentUploadsList.appendChild(uploadItem);
+    });
+  }
+  
 
 // Handle tab clicks
 function handleTabClick(event) {
@@ -96,10 +121,16 @@ function handleFiles(files) {
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
         // Check if the file is an image
-        if (!file.type.startsWith('image/')) {
-            alert('Only image files are allowed.');
+        if (!file.type) {
+            alert('This file has no type!');
             continue;
         }
+const maxSize = 10 * 1024 * 1024; // 10 MB
+if (file.size > maxSize) {
+    alert('This file is too big!');
+    continue;
+}
+        
         // Add file to the uploads list
         addUploadToList(file);
         // Upload file to the data
@@ -134,7 +165,13 @@ function addUploadToList(file) {
     if (recentUploadsList.children.length > 5) {
         recentUploadsList.removeChild(recentUploadsList.lastChild);
     }
+    showTab('recent-uploads');
 }
+
+
+
+
+
 
 
 
@@ -167,12 +204,19 @@ function formatDate(date) {
 // // }
 // Upload a file to data
 async function uploadFileToDatabase(file) {
+    const docRef = await addDoc(fileCollectionRef, {
+        name: file.name,
+        size: file.size,
+        date: new Date()
+      });
+      const fileId = docRef.id;
     try {
         const docRef = await addDoc(fileCollectionRef, { name: file.name, size: file.size, date: new Date() });
         console.log("File added with ID: ", docRef.id);
     } catch (e) {
         console.error("Error adding file: ", e);
     }
+    await getRecentUploads();
 }
 
 
