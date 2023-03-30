@@ -83,3 +83,16 @@
       -ms-flex-pack: space-evenly;
           justify-content: space-evenly;
 }
+
+.recent-uploads {
+  display: block;
+}
+
+.upload-item {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+}
