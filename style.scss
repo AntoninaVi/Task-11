@@ -1,78 +1,92 @@
-.container{
+.container {
     max-width: 1000px;
     width: 100%;
     margin-left: auto;
     margin-right: auto;
 }
-.tabs {
+.main-tabs {
     display: flex;
-    justify-content: space-between;
-    margin: 20px 0;
-  }
-  
-  .tab {
-    padding: 10px 20px;
-    background-color: lightgray;
+    justify-content: center;
+    align-items: center;
+    padding: 0.4em 1.9em;
+    gap: 10px;
+    background: #f7f9fb;
+    box-shadow: inset 0px 0px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 40px;
+    max-width: 12.3em;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 12px;
+    line-height: 14px;
+    white-space: nowrap;
+}
+
+.tab {
+    padding: 7px 20px;
+    color: #4353ff;
     cursor: pointer;
-  }
-  
-  .tab.active {
-    background-color: white;
-    border-bottom: none;
-  }
-  
-  .tab-content {
+    border-radius: 40px;
+}
+
+.tab.active {
+    background-color: #4353ff;
+    color: #ffffff;
+}
+
+.tab-content {
     margin-top: 20px;
-  }
-  
-  .hidden {
+}
+
+.hidden {
     display: none;
-  }
-  
-  .drop-zone {
+}
+
+.drop-zone {
     border: 2px dashed gray;
     padding: 20px;
     text-align: center;
     cursor: pointer;
-  }
-  
-  .drop-zone.highlight {
+}
+
+.drop-zone.highlight {
     background-color: lightgray;
-  }
-  
-  .uploads {
+}
+
+.uploads {
     display: flex;
     flex-wrap: wrap;
-  }
-  
-  .upload {
-    border: 1px solid gray;
-    margin: 10px;
-    padding: 10px;
-  }
-  
-  .upload p {
-    margin: 0;
-  }
-  
-  .upload span {
-    font-weight: bold;
-  }
-  
-  #view-all-btn {
+}
+
+#view-all-btn {
     margin-top: 20px;
-  }
-  .uploads{
-display: block;
-  }
-  .file-item{
+}
+.uploads {
+    display: block;
+}
+.file-item {
     display: flex;
     justify-content: space-evenly;
-  }
-  .recent-uploads{
-      display: block;
-  }
-  .upload-item{
+}
+.recent-uploads {
+    display: block;
+}
+.upload-item {
     display: flex;
     justify-content: space-evenly;
-  }
+}
+
+.last-upload {
+    display: flex;
+    align-items: center;
+
+    &-text {
+        font-size: 12px;
+        line-height: 14px;
+    }
+    &-img {
+        width: 1em;
+        height: 1em;
+        margin-right: 0.5em;
+    }
+}

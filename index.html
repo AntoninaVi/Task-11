@@ -12,8 +12,8 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script> -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    
-    
+
+
 
 
 </head>
@@ -34,7 +34,7 @@
                     <p>Drag and drop files here or click to select files</p>
                     <input type="file" id="file-input" multiple>
                 </div>
-               
+
             </div>
             <div class="tab-content hidden" id="recent">
                 <div class="recent-uploads" id="recent-uploads">
@@ -42,12 +42,16 @@
                     <!-- <p>Loading recent uploads...</p> -->
                 </div>
                 <div class="uploads" id="uploads">
-                 
-                    <p>No uploads yet</p>
+
+
                 </div>
                 <button id="view-all-btn">View All Uploads</button>
             </div>
-           
+
+            <div class="last-upload">
+                <img class="last-upload-img" src="img/tick.svg" alt="">
+                <p class="last-upload-text">Last synced: <span id="time-synced"></span></p>
+            </div>
         </main>
     </div>
 

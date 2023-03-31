@@ -27,6 +27,7 @@ const fileInput = document.getElementById('file-input');
 const uploadsList = document.getElementById('uploads');
 const recentUploadsList = document.getElementById('recent-uploads');
 const viewAllButton = document.getElementById('view-all-btn');
+const syncedTime = document.getElementById('time-synced')
 
 // Event listeners
 tabButtons.forEach(button => button.addEventListener('click', handleTabClick));
@@ -41,6 +42,8 @@ showTab('new-upload');
 
 
 
+const recentlyUploadedFiles = [];
+
 async function getRecentUploads() {
     const q = query(collection(db, "files"), orderBy("date", "desc"));
     const querySnapshot = await getDocs(q);
@@ -48,14 +51,21 @@ async function getRecentUploads() {
     let count = 0;
     const recentFiles = [];
     querySnapshot.forEach((doc) => {
-        if (count < 5) {
-            const data = doc.data();
-            const file = { name: data.name, size: formatBytes(data.size), time: formatDate(data.date.toDate()) };
+        const data = doc.data();
+        const file = { name: data.name, size: formatBytes(data.size), time: formatDate(data.date.toDate()), type: data.type };
+        // Check if file added to recentlyUploadedFiles
+        if (!recentlyUploadedFiles.find((f) => f.name === file.name && f.size === file.size)) {
             recentFiles.push(file);
+            recentlyUploadedFiles.push(file);
             count++;
         }
+        // Show recent 5 uploads
+        if (count >= 5) {
+            return;
+        }
     });
-    recentUploadsList.innerHTML = recentFiles.map(file => `<div class="upload-item"><p>${file.name}</p><p>${file.size}</p><p>${file.time}</p></div>`).join('');
+
+    recentUploadsList.innerHTML = recentFiles.map(file => `<div class="upload-item"><img src="${getIconForFileType(file.type)}"><p>${file.name}</p><p>${file.size}</p><p>${file.time}</p></div>`).join('');
 }
 
 
@@ -151,26 +161,58 @@ function handleFileDrop(event) {
     handleFiles(files);
 }
 
+
+
+const fileTypes = {
+    'image/png': '/img/image.svg',
+    'image/jpeg': '/img/image.svg',
+    'image/svg': '/img/image.svg',
+    'application/pdf': '/img/PDF.svg',
+    'application/folder': '/img/folder.svg',
+    'application/doc': '/img/document.svg',
+};
+
+
+function getIconForFileType(fileType) {
+    const iconFileName = fileTypes[fileType];
+    if (iconFileName) {
+        return `icons/${iconFileName}`;
+    } else {
+        return '/img/document.svg';
+    }
+}
+
+
+
+
+
+
+
+
+function formatFileListItem(file) {
+    const iconUrl = getIconForFileType(file.type);
+    return `<div class="file-item"><img src="${iconUrl}" alt="File icon"><p>${file.name}</p></div>`;
+}
 //  Add a file to uploads list
 function addUploadToList(file) {
     const uploadItem = document.createElement('div');
     uploadItem.className = 'upload-item';
     const name = document.createElement('p');
-    name.innerHTML = file.name;
-    const size = document.createElement('p');
-    size.innerHTML = formatBytes(file.size);
-    const time = document.createElement('p');
-    time.innerHTML = formatDate(new Date());
+    name.innerText = file.name;
     uploadItem.appendChild(name);
+    const size = document.createElement('p');
+    size.innerText = formatBytes(file.size);
     uploadItem.appendChild(size);
+    const time = document.createElement('p');
+    time.innerText = formatDate(new Date());
     uploadItem.appendChild(time);
-    // Recent uploads list
-    recentUploadsList.insertBefore(uploadItem, recentUploadsList.firstChild);
-    // Remove last item from recent uploads list(if more than 5)
-    if (recentUploadsList.children.length > 5) {
-        recentUploadsList.removeChild(recentUploadsList.lastChild);
-    }
+    const icon = document.createElement('img');
+    icon.src = getIconForFileType(file.type);
+    uploadItem.appendChild(icon);
+    uploadsList.appendChild(uploadItem);
+
     showTab('recent-uploads');
+
 }
 
 
@@ -206,24 +248,22 @@ function formatDate(date) {
 
 
 
-// // }
+
 // Upload a file to data
 async function uploadFileToDatabase(file) {
+    const { name, type, size } = file;
+    const storageRef = ref(storage, `files/${name}`);
     const docRef = await addDoc(fileCollectionRef, {
-        name: file.name,
-        size: file.size,
-        date: new Date()
+        name,
+        type,
+        size,
+        icon: getIconForFileType(type),
+        date: serverTimestamp()
     });
-    const fileId = docRef.id;
-    try {
-        const docRef = await addDoc(fileCollectionRef, { name: file.name, size: file.size, date: new Date() });
-        console.log("File added with ID: ", docRef.id);
-    } catch (e) {
-        console.error("Error adding file: ", e);
-    }
-    await getRecentUploads();
+    const snapshot = await uploadBytes(storageRef, file);
+    console.log('Uploaded file:', snapshot.metadata.name);
+    return docRef;
 }
-
 
 
 
@@ -257,32 +297,23 @@ function formatTimeAgo(date) {
 }
 
 
-async function handleViewAll() {
-    // Get all files from the database
-    const querySnapshot = await getDocs(fileCollectionRef);
-    // Clear the recent uploads list
-    recentUploadsList.innerHTML = '';
-    // Loop through the files and add them to the uploads list
-    querySnapshot.forEach((doc) => {
-        const fileData = doc.data();
-        const fileItem = document.createElement('div');
-        fileItem.className = 'file-item';
-        const name = document.createElement('p');
-        name.innerHTML = fileData.name;
-        const size = document.createElement('p');
-        size.innerHTML = formatBytes(fileData.size);
-        const time = document.createElement('p');
-        time.innerHTML = formatDate(new Date(fileData.uploadTime));
 
-        fileItem.appendChild(name);
-        fileItem.appendChild(size);
-        fileItem.appendChild(time);
-        uploadsList.appendChild(fileItem);
+async function handleViewAll() {
+    // Get uploads from database
+    const q = query(collection(db, "files"), orderBy("date", "desc"));
+    const querySnapshot = await getDocs(q);
+    const allUploads = [];
+    querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const file = { name: data.name, size: formatBytes(data.size), time: formatDate(data.date.toDate()) };
+        allUploads.push(file);
     });
-    // Hide the recent uploads list and show the uploads list
-    recentUploadsList.classList.add('hidden');
-    uploadsList.classList.remove('hidden');
+    // Clear recent/add all uploads
+    recentUploadsList.innerHTML = '';
+    recentUploadsList.innerHTML = allUploads.map(file => `<div class="upload-item"><p>${file.name}</p><p>${file.size}</p><p>${file.time}</p></div>`).join('');
 }
+
+
 
 
 
@@ -310,3 +341,30 @@ window.addEventListener('load', async () => {
 
 
 
+// Get last upload time
+async function getLastUploadTime() {
+    const q = query(collection(db, "files"), orderBy("date", "desc"));
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.size > 0) {
+        const lastUploadTime = querySnapshot.docs[0].data().date.toDate();
+        const currentTime = new Date();
+        const timeDiff = currentTime.getTime() - lastUploadTime.getTime();
+        const minutesDiff = Math.floor(timeDiff / (1000 * 60));
+        if (minutesDiff === 0) {
+            return 'just now';
+        } else if (minutesDiff === 1) {
+            return '1 minute ago';
+        } else {
+            return `${minutesDiff} minutes ago`;
+        }
+    } else {
+        return 'never';
+    }
+}
+// Show last upload time
+async function showLastUploadTime() {
+    const lastUploadTime = await getLastUploadTime();
+    const lastUploadEl = document.getElementById('time-synced');
+    lastUploadEl.textContent = lastUploadTime;
+}
+showLastUploadTime();
