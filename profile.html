@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <article class="profile-info">
+                <img src="img/profile.svg" alt="" class="profile-img">
+                <div class="profile-info__text">
+                    <p class="profile-info-text__name">Laura Eddy</p>
+                    <p class="profile-info-text__contacts">info@lauraeddy.com.au</p>
+                </div>
+            </article>
+            <a class="page-button" href="index.html"></a>
+        </header>
+        <main class="profile__main">
+            <section class="storage__info">
+                <h2 class="storage__info-title">Storage</h2>
+                <p class="storage__info-subscription">84gb of 120GB</p>
+                <progress class="storage__info-progress" value="75" max="100"></progress>
+                <div class="storage__link">
+                    <a href="#" class="storage__link-btn">Upgrade Plan</a>
+                    <p class="storage__link-offer">10% off plans this month</p>
+                </div>
+            </section>
+            <section class="actions">
+                <article class="actions__article">
+                    <div class="actions__article-text">
+                        <h2 class="actions__article-title">Storage location</h2>
+                        <p class="actions__article-subscription">C: Laura\My Documents</p>
+                    </div>
+                    <button class="actions__article-btn">Change</button>
+                </article>
+
+                <article class="actions__article">
+                    <div class="actions__article-text">
+                        <h2 class="actions__article-title">Notifications</h2>
+                        <p class="actions__article-subscription">All notifications enabled</p>
+                    </div>
+                    <button class="actions__article-btn">Change</button>
+                </article>
+            </section>
+        </main>
+
+
+
+        <footer class="footer">
+            <div class="last-upload">
+                <img class="last-upload-img" src="img/tick.svg" alt="">
+                <p class="last-upload-text">Last synced: <span id="time-synced"></span></p>
+            </div>
+        </footer>
+    </div>
+
+
+
+    <script src="/profile.js"></script>
+</body>
+
+</html>

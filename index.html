@@ -24,14 +24,21 @@
 
 
         <main class="main">
-            <div class="main-tabs">
-                <div class="tab active" data-tab="new-upload">New Upload</div>
-                <div class="tab" data-tab="recent">Recent</div>
+
+            <div class="tabs-buttons">
+                <div class="main-tabs">
+                    <div class="tab active" data-tab="new-upload">New Upload</div>
+                    <div class="tab" data-tab="recent">Recent</div>
+                </div>
+
+                <a class="page-button" href="profile.html"></a>
             </div>
+
+
 
             <div class="tab-content" id="new-upload">
                 <div class="drop-zone" id="drop-zone">
-                    <p>Drag and drop files here or click to select files</p>
+                    <p>Click to browse or drag and drop your files</p>
                     <input type="file" id="file-input" multiple>
                 </div>
 
@@ -39,7 +46,7 @@
             <div class="tab-content hidden" id="recent">
                 <div class="recent-uploads" id="recent-uploads">
                     <p class="upload-item"></p>
-                    <!-- <p>Loading recent uploads...</p> -->
+
                 </div>
                 <div class="uploads" id="uploads">
 
@@ -47,11 +54,13 @@
                 </div>
                 <button id="view-all-btn">View All Uploads</button>
             </div>
+            <footer class="footer">
+                <div class="last-upload">
+                    <img class="last-upload-img" src="img/tick.svg" alt="">
+                    <p class="last-upload-text">Last synced: <span id="time-synced"></span></p>
+                </div>
+            </footer>
 
-            <div class="last-upload">
-                <img class="last-upload-img" src="img/tick.svg" alt="">
-                <p class="last-upload-text">Last synced: <span id="time-synced"></span></p>
-            </div>
         </main>
     </div>
 

@@ -65,7 +65,7 @@ async function getRecentUploads() {
         }
     });
 
-    recentUploadsList.innerHTML = recentFiles.map(file => `<div class="upload-item"><img src="${getIconForFileType(file.type)}"><p>${file.name}</p><p>${file.size}</p><p>${file.time}</p></div>`).join('');
+    recentUploadsList.innerHTML = recentFiles.map(file => `<div class="upload-item"><div class="upload-item__content"><img class="upload-item__img" src="${getIconForFileType(file.type)}"><div><p class="upload-item__name">${file.name}</p><p class="upload-item__time">${file.time}</p></div></div> <p class="upload-item__size">${file.size}</p></div>`).join('');
 }
 
 
@@ -167,7 +167,7 @@ const fileTypes = {
     'image/png': '/img/image.svg',
     'image/jpeg': '/img/image.svg',
     'image/svg': '/img/image.svg',
-    'application/pdf': '/img/PDF.svg',
+    'application/pdf': 'img/PDF.svg',
     'application/folder': '/img/folder.svg',
     'application/doc': '/img/document.svg',
 };
@@ -176,7 +176,7 @@ const fileTypes = {
 function getIconForFileType(fileType) {
     const iconFileName = fileTypes[fileType];
     if (iconFileName) {
-        return `icons/${iconFileName}`;
+        return `/${iconFileName}`;
     } else {
         return '/img/document.svg';
     }
@@ -231,20 +231,24 @@ function formatBytes(bytes) {
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + ' ' + sizes[i];
 }
-// Function to format a date to a string
-function formatDate(date) {
-    const options = {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-    };
-    return date.toLocaleDateString('en-US', options);
-}
-
+// Function to format date to string
+function formatDate(timestamp) {
+    const milliseconds = new Date().getTime() - timestamp.getTime();
+    const seconds = Math.floor(milliseconds / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    if (days > 0) {
+      return `${days} ${days > 1 ? 'days' : 'day'} ago`;
+    } else if (hours > 0) {
+      return `${hours} ${hours > 1 ? 'hours' : 'hour'} ago`;
+    } else if (minutes > 0) {
+      return `${minutes} ${minutes > 1 ? 'minutes' : 'minute'} ago`;
+    } else {
+      return `${seconds} ${seconds > 1 ? 'seconds' : 'second'} ago`;
+    }
+  }
+  
 
 
 
