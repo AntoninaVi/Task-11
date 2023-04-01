@@ -27,7 +27,7 @@ const fileInput = document.getElementById('file-input');
 const uploadsList = document.getElementById('uploads');
 const recentUploadsList = document.getElementById('recent-uploads');
 const viewAllButton = document.getElementById('view-all-btn');
-const syncedTime = document.getElementById('time-synced')
+const syncedTime = document.getElementById('time-synced');
 
 // Event listeners
 tabButtons.forEach(button => button.addEventListener('click', handleTabClick));
@@ -121,7 +121,7 @@ function handleFileSelect(event) {
 }
 
 async function handleFiles(files) {
-    // Loop through the selected files
+    // Loop through files
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
 
@@ -253,7 +253,7 @@ function formatDate(timestamp) {
 
 
 
-// Upload a file to data
+// Upload file to data
 async function uploadFileToDatabase(file) {
     const { name, type, size } = file;
     const storageRef = ref(storage, `files/${name}`);

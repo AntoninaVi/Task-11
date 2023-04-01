@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>File Upload</title>
-
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="normalize.css">
+    <link rel="stylesheet" href="style.css">
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.0/firebase-app.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -38,8 +38,8 @@
 
             <div class="tab-content" id="new-upload">
                 <div class="drop-zone" id="drop-zone">
-                    <p>Click to browse or drag and drop your files</p>
-                    <input type="file" id="file-input" multiple>
+                    <p class="drop-zone__text"></p>
+                    <input class="drop-zone__input" type="file" id="file-input" multiple>
                 </div>
 
             </div>

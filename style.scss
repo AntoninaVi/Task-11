@@ -1,3 +1,4 @@
+
 @font-face {
     font-family: "SF Pro Display ";
     src: url("/fonts/SF-Pro-Display-Bold.otf") format("otf"), url("/fonts/SF-Pro-Display-Medium.otf") format("otf"),
@@ -21,13 +22,16 @@ h2 {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
+   padding-top: 1em;
 }
 
 .main-tabs {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0.4em 1.9em;
+    padding: 0.4em 8.5em;
+    max-width: 12.3em;
+    width: 100%;
     gap: 10px;
     background: #f7f9fb;
     box-shadow: inset 0px 0px 2px rgba(0, 0, 0, 0.1);
@@ -86,8 +90,25 @@ h2 {
     cursor: pointer;
 }
 
-.drop-zone.highlight {
-    background-color: lightgray;
+.drop-zone__input {
+    color: transparent;
+    max-width: 20em;
+    width: 100%;
+}
+.drop-zone__input::-webkit-file-upload-button {
+    visibility: hidden;
+}
+.drop-zone__input::before {
+    content: "Click to browse or drag and drop your files";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 17px;
+    text-align: center;
+    color: #242634;
+    opacity: 0.5;
+    -webkit-user-select: none;
+    cursor: pointer;
 }
 
 .uploads {
@@ -135,9 +156,9 @@ h2 {
         font-weight: 600;
         font-size: 11px;
         line-height: 12px;
-        border: 1px solid #CDD3D8;
-border-radius: 2px;
-padding: 4px 8px;
+        border: 1px solid #cdd3d8;
+        border-radius: 2px;
+        padding: 4px 8px;
     }
     &__time {
         margin-right: 1em;
@@ -185,6 +206,7 @@ padding: 4px 8px;
         font-style: normal;
         font-weight: 700;
         font-size: 14px;
+        line-height: 17px;
     }
 
     &__contacts {
