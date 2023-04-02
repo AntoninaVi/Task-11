@@ -65,7 +65,7 @@ async function getRecentUploads() {
         }
     });
 
-    recentUploadsList.innerHTML = recentFiles.map(file => `<div class="upload-item"><div class="upload-item__content"><img class="upload-item__img" src="${getIconForFileType(file.type)}"><div><p class="upload-item__name">${file.name}</p><p class="upload-item__time">${file.time}</p></div></div> <p class="upload-item__size">${file.size}</p></div>`).join('');
+    recentUploadsList.innerHTML = recentFiles.map(file => `<div class="upload-item"><div class="upload-item__content"><img class="upload-item__img" src="${getIconForFileType(file.type)}"><div><p class="upload-item__name">${file.name}</p><p class="upload-item__time">${file.time}</p></div></div><div class="upload-item__content-size"> <p class="upload-item__size">${file.size}</p><button class="upload-item__btn"></button></div></div>`).join('');
 }
 
 
@@ -129,7 +129,7 @@ async function handleFiles(files) {
             alert('This file has no type!');
             continue;
         }
-        const maxSize = 10 * 1024 * 1024; // 10 MB
+        const maxSize = 100 * 1024 * 1024; // 100 MB
         if (file.size > maxSize) {
             alert('This file is too big!');
             continue;
@@ -154,7 +154,6 @@ async function handleFiles(files) {
     fileInput.value = '';
 }
 
-
 function handleFileDrop(event) {
     event.preventDefault();
     const files = event.dataTransfer.files;
@@ -164,12 +163,12 @@ function handleFileDrop(event) {
 
 
 const fileTypes = {
-    'image/png': '/img/image.svg',
-    'image/jpeg': '/img/image.svg',
-    'image/svg': '/img/image.svg',
+    'image/png': 'img/image.svg',
+    'image/jpeg': 'img/image.svg',
+    'image/svg': 'img/image.svg',
     'application/pdf': 'img/PDF.svg',
-    'application/folder': '/img/folder.svg',
-    'application/doc': '/img/document.svg',
+    'application/folder': 'img/folder.svg',
+    'application/doc': 'img/document.svg',
 };
 
 
@@ -183,40 +182,70 @@ function getIconForFileType(fileType) {
 }
 
 
+// function formatFileListItem(file) {
+//     const iconUrl = getIconForFileType(file.type);
+//     return `<div class="file-item"><img src="${iconUrl}" alt="icon"><p>${file.name}</p></div>`;
+// }
 
 
-
-
-
-
-function formatFileListItem(file) {
-    const iconUrl = getIconForFileType(file.type);
-    return `<div class="file-item"><img src="${iconUrl}" alt="File icon"><p>${file.name}</p></div>`;
-}
 //  Add a file to uploads list
 function addUploadToList(file) {
-    const uploadItem = document.createElement('div');
-    uploadItem.className = 'upload-item';
-    const name = document.createElement('p');
-    name.innerText = file.name;
-    uploadItem.appendChild(name);
-    const size = document.createElement('p');
-    size.innerText = formatBytes(file.size);
-    uploadItem.appendChild(size);
-    const time = document.createElement('p');
-    time.innerText = formatDate(new Date());
-    uploadItem.appendChild(time);
-    const icon = document.createElement('img');
-    icon.src = getIconForFileType(file.type);
-    uploadItem.appendChild(icon);
-    uploadsList.appendChild(uploadItem);
+    // Find existing wrapper for this file
+    const existingWrapper = uploadsList.querySelector(`[data-name="${file.name}"]`);
+
+    if (existingWrapper) {
+        // If wrapper exists, update its contents
+        const sizeElem = existingWrapper.querySelector('.upload-item__size');
+        sizeElem.innerText = formatBytes(file.size);
+
+        const timeElem = existingWrapper.querySelector('.upload-item__time');
+        timeElem.innerText = formatDate(new Date());
+
+        const iconElem = existingWrapper.querySelector('.upload-item__img');
+        iconElem.src = getIconForFileType(file.type);
+    } else {
+        // If wrapper doesn't exist, create a new one
+        const uploadItem = document.createElement('div');
+        uploadItem.className = 'upload-item';
+        uploadItem.setAttribute('data-name', file.name);
+
+        const content = document.createElement('div');
+        content.className = 'upload-item__content';
+        uploadItem.appendChild(content);
+
+        const icon = document.createElement('img');
+        icon.className = 'upload-item__img';
+        icon.src = getIconForFileType(file.type);
+        content.appendChild(icon);
+
+        const name = document.createElement('p');
+        name.className = 'upload-item__name';
+        name.innerText = file.name;
+        content.appendChild(name);
+
+        const time = document.createElement('p');
+        time.className = 'upload-item__time';
+        time.innerText = formatDate(new Date());
+        content.appendChild(time);
+
+        const contentSize = document.createElement('div');
+        contentSize.className = 'upload-item__content-size';
+        uploadItem.appendChild(contentSize);
+
+        const size = document.createElement('p');
+        size.className = 'upload-item__size';
+        size.innerText = formatBytes(file.size);
+        contentSize.appendChild(size);
+
+        const btn = document.createElement('button');
+        btn.className = 'upload-item__btn';
+        contentSize.appendChild(btn);
+
+        uploadsList.appendChild(uploadItem);
+    }
 
     showTab('recent-uploads');
-
 }
-
-
-
 
 
 
@@ -239,40 +268,33 @@ function formatDate(timestamp) {
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
     if (days > 0) {
-      return `${days} ${days > 1 ? 'days' : 'day'} ago`;
+        return `${days} ${days > 1 ? 'days' : 'day'} ago`;
     } else if (hours > 0) {
-      return `${hours} ${hours > 1 ? 'hours' : 'hour'} ago`;
+        return `${hours} ${hours > 1 ? 'hours' : 'hour'} ago`;
     } else if (minutes > 0) {
-      return `${minutes} ${minutes > 1 ? 'minutes' : 'minute'} ago`;
+        return `${minutes} ${minutes > 1 ? 'minutes' : 'minute'} ago`;
     } else {
-      return `${seconds} ${seconds > 1 ? 'seconds' : 'second'} ago`;
+        return `${seconds} ${seconds > 1 ? 'seconds' : 'second'} ago`;
     }
-  }
-  
+}
+
 
 
 
 
 // Upload file to data
 async function uploadFileToDatabase(file) {
-    const { name, type, size } = file;
-    const storageRef = ref(storage, `files/${name}`);
     const docRef = await addDoc(fileCollectionRef, {
-        name,
-        type,
-        size,
-        icon: getIconForFileType(type),
-        date: serverTimestamp()
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        date: new Date(),
     });
-    const snapshot = await uploadBytes(storageRef, file);
-    console.log('Uploaded file:', snapshot.metadata.name);
+    const ref = docRef.id;
     return docRef;
 }
 
 
-
-
-// 
 
 // format file size 
 function formatFileSize(bytes) {
@@ -314,27 +336,9 @@ async function handleViewAll() {
     });
     // Clear recent/add all uploads
     recentUploadsList.innerHTML = '';
-    recentUploadsList.innerHTML = allUploads.map(file => `<div class="upload-item"><p>${file.name}</p><p>${file.size}</p><p>${file.time}</p></div>`).join('');
+    recentUploadsList.innerHTML = allUploads.map(file => `<div class="upload-item"><div class="upload-item__content"><img class="upload-item__img" src="${getIconForFileType(file.type)}"><div><p class="upload-item__name">${file.name}</p><p class="upload-item__time">${file.time}</p></div></div><div class="upload-item__content-size"> <p class="upload-item__size">${file.size}</p><button class="upload-item__btn"></button></div></div>`).join('');
 }
 
-
-
-
-
-function createUploadItem(upload) {
-    const uploadItem = document.createElement('div');
-    uploadItem.className = 'upload-item';
-    const name = document.createElement('p');
-    name.innerHTML = upload.name;
-    const size = document.createElement('p');
-    size.innerHTML = formatBytes(upload.size);
-    const time = document.createElement('p');
-    time.innerHTML = formatDate(upload.time.toDate());
-    uploadItem.appendChild(name);
-    uploadItem.appendChild(size);
-    uploadItem.appendChild(time);
-    return uploadItem;
-}
 
 
 
@@ -370,5 +374,7 @@ async function showLastUploadTime() {
     const lastUploadTime = await getLastUploadTime();
     const lastUploadEl = document.getElementById('time-synced');
     lastUploadEl.textContent = lastUploadTime;
+   
 }
 showLastUploadTime();
+

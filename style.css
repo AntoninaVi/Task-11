@@ -14,6 +14,7 @@ h2 {
   font-weight: 700;
   font-size: 14px;
   line-height: 16px;
+  margin-bottom: 0.5em;
 }
 
 .container {
@@ -64,7 +65,8 @@ h2 {
 }
 
 .tab-content {
-  margin-top: 20px;
+  margin-top: 1em;
+  margin-bottom: 1em;
 }
 
 .hidden {
@@ -78,9 +80,15 @@ h2 {
 }
 
 .page-button {
-  background-image: url(img/settings.svg);
-  background-repeat: no-repeat;
-  background-position: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   width: 36px;
   height: 36px;
   border: 1px solid lightgrey;
@@ -89,6 +97,12 @@ h2 {
   border-radius: 20px;
 }
 .page-button:hover {
+  background-color: rgb(67, 83, 255);
+  color: #ffffff;
+  -webkit-transition: ease-in 0.3s;
+  transition: ease-in 0.3s;
+}
+.page-button:focus {
   background-color: rgb(67, 83, 255);
   color: #ffffff;
 }
@@ -157,6 +171,7 @@ h2 {
       -ms-flex-align: start;
           align-items: flex-start;
   width: 100%;
+  margin-bottom: 1em;
 }
 
 .upload-item {
@@ -171,6 +186,7 @@ h2 {
           align-items: baseline;
   border-bottom: 1px solid #ebeff2;
   width: 100%;
+  padding: 1em 0;
 }
 .upload-item__content {
   display: -webkit-box;
@@ -191,6 +207,14 @@ h2 {
   height: 16px;
   margin-right: 1em;
 }
+.upload-item__content-size {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
 .upload-item__size {
   margin-right: 1em;
   font-weight: 600;
@@ -207,6 +231,16 @@ h2 {
   font-size: 12px;
   line-height: 14px;
 }
+.upload-item__btn {
+  background-image: url(img/ellipsis.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 3px;
+  height: 13px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
 
 .last-upload {
   display: -webkit-box;
@@ -215,6 +249,7 @@ h2 {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  padding: 1em;
 }
 .last-upload-text {
   font-size: 12px;
@@ -224,6 +259,31 @@ h2 {
   width: 1em;
   height: 1em;
   margin-right: 0.5em;
+}
+
+.view-all-btn {
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 12em;
+  white-space: nowrap;
+  cursor: pointer;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 14px;
+  text-align: center;
+  color: #242634;
+  padding: 7px 20px;
+  background: #ffffff;
+  border: 1px solid #cdd3d8;
+  border-radius: 40px;
+}
+.view-all-btn:hover {
+  background-color: rgb(67, 83, 255);
+  color: #ffffff;
+  -webkit-transition: ease-in 0.3s;
+  transition: ease-in 0.3s;
 }
 
 .header {
@@ -236,6 +296,9 @@ h2 {
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
+  border-bottom: 1px solid #ebeff2;
+  padding-bottom: 1em;
+  margin-bottom: 1em;
 }
 
 .profile-info {
@@ -259,6 +322,7 @@ h2 {
   font-weight: 700;
   font-size: 14px;
   line-height: 17px;
+  margin-bottom: 2px;
 }
 .profile-info-text__contacts {
   font-style: normal;
@@ -268,7 +332,8 @@ h2 {
 }
 
 .storage__info {
-  margin-bottom: 1em;
+  border-bottom: 1px solid #ebeff2;
+  padding-bottom: 1em;
 }
 .storage__info-subscription {
   font-style: normal;
@@ -276,6 +341,7 @@ h2 {
   font-size: 11px;
   line-height: 11px;
   text-transform: uppercase;
+  margin-bottom: 0.8em;
 }
 .storage__info-progress {
   border-radius: 7px;
@@ -305,6 +371,13 @@ h2 {
   color: #ffffff;
   border-radius: 40px;
 }
+.storage__link-btn:hover {
+  background: #ffffff;
+  color: #4353ff;
+  outline: 0.5px solid #4353ff;
+  -webkit-transition: 0.3s;
+  transition: 0.3s;
+}
 .storage__link-offer {
   font-style: normal;
   font-weight: 700;
@@ -327,6 +400,10 @@ h2 {
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
+  padding: 1em 0;
+}
+.actions__article:first-child {
+  border-bottom: 1px solid #ebeff2;
 }
 .actions__article-subscription {
   font-style: normal;
@@ -342,6 +419,12 @@ h2 {
   background-color: #ffffff;
   cursor: pointer;
 }
+.actions__article-btn:hover {
+  background-color: #4353ff;
+  color: #ffffff;
+  -webkit-transition: 0.3s;
+  transition: 0.3s;
+}
 
 progress::-webkit-progress-bar {
   background-color: #ebeff2;
@@ -351,4 +434,8 @@ progress::-webkit-progress-bar {
 progress::-webkit-progress-value {
   background-color: #4353ff;
   border-radius: 24px;
+}
+
+.footer {
+  background: #f8f8f8;
 }
