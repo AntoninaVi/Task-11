@@ -165,11 +165,11 @@ function handleFileDrop(event) {
 
 
 const fileTypes = {
-    'image/png': 'img/image.svg',
-    'image/jpeg': 'img/image.svg',
-    'image/svg': 'img/image.svg',
-    'application/pdf': 'img/PDF.svg',
-    'application/folder': 'img/folder.svg',
+    'image/png': './img/image.svg',
+    'image/jpeg': './img/image.svg',
+    'image/svg': './img/image.svg',
+    'application/pdf': './img/PDF.svg',
+    'application/folder': './img/folder.svg',
     'application/doc': 'img/document.svg',
     'text/plain': 'img/document.svg',
 };
