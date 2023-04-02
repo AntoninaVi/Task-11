@@ -214,7 +214,7 @@ function addUploadToList(file) {
         icon.src = getIconForFileType(file.type);
         content.appendChild(icon);
 
-        const itemWrapper = document.createElement('div'); 
+        const itemWrapper = document.createElement('div');
         itemWrapper.className = 'upload-item__name-time-wrapper';
         content.appendChild(itemWrapper);
 

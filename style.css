@@ -201,6 +201,15 @@ h2 {
   font-weight: 500;
   font-size: 14px;
   line-height: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 15em;
+}
+@media screen and (max-width: 390px) {
+  .upload-item__name {
+    width: 9em;
+  }
 }
 .upload-item__img {
   width: 16px;
@@ -223,6 +232,7 @@ h2 {
   border: 1px solid #cdd3d8;
   border-radius: 2px;
   padding: 4px 8px;
+  white-space: nowrap;
 }
 .upload-item__time {
   margin-right: 1em;
@@ -370,6 +380,7 @@ h2 {
   background: #4353ff;
   color: #ffffff;
   border-radius: 40px;
+  text-align: center;
 }
 .storage__link-btn:hover {
   background: #ffffff;
@@ -439,4 +450,6 @@ progress::-webkit-progress-value {
 
 .footer {
   background: #f8f8f8;
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
 }
