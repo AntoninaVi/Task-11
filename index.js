@@ -26,6 +26,7 @@ const dropZone = document.getElementById('drop-zone');
 const fileInput = document.getElementById('file-input');
 const uploadsList = document.getElementById('uploads');
 const recentUploadsList = document.getElementById('recent-uploads');
+const recentTab = document.getElementById('recent')
 const viewAllButton = document.getElementById('view-all-btn');
 const syncedTime = document.getElementById('time-synced');
 
@@ -140,12 +141,12 @@ async function handleFiles(files) {
         // Upload file data
         await uploadFileToDatabase(file);
         // Show the Recent tab
-        showTab('recent-uploads');
+        showTab('recent');
         // Get recent uploads and show
         await getRecentUploads();
         // Hide other tabs
         tabContents.forEach(content => {
-            if (content.id !== 'recent-uploads') {
+            if (content.id !== 'recent') {
                 content.classList.add('hidden');
             }
         });
@@ -181,20 +182,13 @@ function getIconForFileType(fileType) {
     }
 }
 
-
-// function formatFileListItem(file) {
-//     const iconUrl = getIconForFileType(file.type);
-//     return `<div class="file-item"><img src="${iconUrl}" alt="icon"><p>${file.name}</p></div>`;
-// }
-
-
 //  Add a file to uploads list
 function addUploadToList(file) {
-    // Find existing wrapper for this file
+    // Find existing wrapper
     const existingWrapper = uploadsList.querySelector(`[data-name="${file.name}"]`);
 
     if (existingWrapper) {
-        // If wrapper exists, update its contents
+        //Wrapper exists -> update
         const sizeElem = existingWrapper.querySelector('.upload-item__size');
         sizeElem.innerText = formatBytes(file.size);
 
@@ -204,7 +198,7 @@ function addUploadToList(file) {
         const iconElem = existingWrapper.querySelector('.upload-item__img');
         iconElem.src = getIconForFileType(file.type);
     } else {
-        // If wrapper doesn't exist, create a new one
+        // If wrapper doesn't exist -> create
         const uploadItem = document.createElement('div');
         uploadItem.className = 'upload-item';
         uploadItem.setAttribute('data-name', file.name);
@@ -244,7 +238,7 @@ function addUploadToList(file) {
         uploadsList.appendChild(uploadItem);
     }
 
-    showTab('recent-uploads');
+    showTab('recent');
 }
 
 
@@ -325,7 +319,7 @@ function formatTimeAgo(date) {
 
 
 async function handleViewAll() {
-    // Get uploads from database
+    // get uploads from database
     const q = query(collection(db, "files"), orderBy("date", "desc"));
     const querySnapshot = await getDocs(q);
     const allUploads = [];
@@ -341,7 +335,7 @@ async function handleViewAll() {
 
 
 
-
+//Exactly recent files when recent tab is downloaded
 window.addEventListener('load', async () => {
     await getRecentUploads();
 });
