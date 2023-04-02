@@ -22,7 +22,7 @@ h2 {
   width: 100%;
   margin-left: auto;
   margin-right: auto;
-  padding-top: 1em;
+  padding: 1em 1em;
 }
 
 .main-tabs {
@@ -390,6 +390,7 @@ h2 {
   border-radius: 4px;
   padding: 8.5px 12px;
 }
+
 .actions__article {
   display: -webkit-box;
   display: -ms-flexbox;

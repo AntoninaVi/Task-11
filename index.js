@@ -37,8 +37,8 @@ dropZone.addEventListener('dragleave', handleDragLeave);
 dropZone.addEventListener('drop', handleDrop);
 fileInput.addEventListener('change', handleFileSelect);
 viewAllButton.addEventListener('click', handleViewAll);
-//   getRecentUploads();
-// Show New by default
+
+// Show New
 showTab('new-upload');
 
 
@@ -66,7 +66,7 @@ async function getRecentUploads() {
         }
     });
 
-    recentUploadsList.innerHTML = recentFiles.map(file => `<div class="upload-item"><div class="upload-item__content"><img class="upload-item__img" src="${getIconForFileType(file.type)}"><div><p class="upload-item__name">${file.name}</p><p class="upload-item__time">${file.time}</p></div></div><div class="upload-item__content-size"> <p class="upload-item__size">${file.size}</p><button class="upload-item__btn"></button></div></div>`).join('');
+    recentUploadsList.innerHTML = recentFiles.map(file => `<div class="upload-item"><div class="upload-item__content"><img class="upload-item__img" src="${getIconForFileType(file.type)}"><div class="upload-item__name-time-wrapper"><p class="upload-item__name">${file.name}</p><p class="upload-item__time">${file.time}</p></div></div><div class="upload-item__content-size"> <p class="upload-item__size">${file.size}</p><button class="upload-item__btn"></button></div></div>`).join('');
 }
 
 
@@ -76,7 +76,7 @@ function handleTabClick(event) {
     showTab(tab);
 }
 
-// Show the specified tab and hide others
+// Show the specified tab
 function showTab(tab) {
     tabButtons.forEach(button => {
         if (button.dataset.tab === tab) {
@@ -94,19 +94,19 @@ function showTab(tab) {
     });
 }
 
-// drag over events on drop zone
+// drag over events 
 function handleDragOver(event) {
     event.preventDefault();
     dropZone.classList.add('dragover');
 }
 
-// drag leave events on drop zone
+// drag leave events 
 function handleDragLeave(event) {
     event.preventDefault();
     dropZone.classList.remove('dragover');
 }
 
-// drop events on drop zone
+// drop events 
 function handleDrop(event) {
     event.preventDefault();
     dropZone.classList.remove('dragover');
@@ -122,7 +122,7 @@ function handleFileSelect(event) {
 }
 
 async function handleFiles(files) {
-    // Loop through files
+
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
 
@@ -136,11 +136,11 @@ async function handleFiles(files) {
             continue;
         }
 
-        // Add file to uploads list
+        // Add file to upload list
         addUploadToList(file);
         // Upload file data
         await uploadFileToDatabase(file);
-        // Show the Recent tab
+        // Show Recent tab
         showTab('recent');
         // Get recent uploads and show
         await getRecentUploads();
@@ -155,6 +155,7 @@ async function handleFiles(files) {
     fileInput.value = '';
 }
 
+//drag drop event
 function handleFileDrop(event) {
     event.preventDefault();
     const files = event.dataTransfer.files;
@@ -170,9 +171,10 @@ const fileTypes = {
     'application/pdf': 'img/PDF.svg',
     'application/folder': 'img/folder.svg',
     'application/doc': 'img/document.svg',
+    'text/plain': 'img/document.svg',
 };
 
-
+//Icons for each file
 function getIconForFileType(fileType) {
     const iconFileName = fileTypes[fileType];
     if (iconFileName) {
@@ -182,7 +184,7 @@ function getIconForFileType(fileType) {
     }
 }
 
-//  Add a file to uploads list
+//  Add file
 function addUploadToList(file) {
     // Find existing wrapper
     const existingWrapper = uploadsList.querySelector(`[data-name="${file.name}"]`);
@@ -212,15 +214,19 @@ function addUploadToList(file) {
         icon.src = getIconForFileType(file.type);
         content.appendChild(icon);
 
+        const itemWrapper = document.createElement('div'); 
+        itemWrapper.className = 'upload-item__name-time-wrapper';
+        content.appendChild(itemWrapper);
+
         const name = document.createElement('p');
         name.className = 'upload-item__name';
         name.innerText = file.name;
-        content.appendChild(name);
+        itemWrapper.appendChild(name);
 
         const time = document.createElement('p');
         time.className = 'upload-item__time';
         time.innerText = formatDate(new Date());
-        content.appendChild(time);
+        itemWrapper.appendChild(time);
 
         const contentSize = document.createElement('div');
         contentSize.className = 'upload-item__content-size';
@@ -254,7 +260,7 @@ function formatBytes(bytes) {
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + ' ' + sizes[i];
 }
-// Function to format date to string
+// Function to format date
 function formatDate(timestamp) {
     const milliseconds = new Date().getTime() - timestamp.getTime();
     const seconds = Math.floor(milliseconds / 1000);
@@ -330,12 +336,12 @@ async function handleViewAll() {
     });
     // Clear recent/add all uploads
     recentUploadsList.innerHTML = '';
-    recentUploadsList.innerHTML = allUploads.map(file => `<div class="upload-item"><div class="upload-item__content"><img class="upload-item__img" src="${getIconForFileType(file.type)}"><div><p class="upload-item__name">${file.name}</p><p class="upload-item__time">${file.time}</p></div></div><div class="upload-item__content-size"> <p class="upload-item__size">${file.size}</p><button class="upload-item__btn"></button></div></div>`).join('');
+    recentUploadsList.innerHTML = allUploads.map(file => `<div class="upload-item"><div class="upload-item__content"><img class="upload-item__img" src="${getIconForFileType(file.type)}"><div class="upload-item__name-time-wrapper"><p class="upload-item__name">${file.name}</p><p class="upload-item__time">${file.time}</p></div></div><div class="upload-item__content-size"> <p class="upload-item__size">${file.size}</p><button class="upload-item__btn"></button></div></div>`).join('');
 }
 
 
 
-//Exactly recent files when recent tab is downloaded
+//Recent files when recent tab is downloaded
 window.addEventListener('load', async () => {
     await getRecentUploads();
 });
