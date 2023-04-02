@@ -374,7 +374,8 @@ async function showLastUploadTime() {
     const lastUploadTime = await getLastUploadTime();
     const lastUploadEl = document.getElementById('time-synced');
     lastUploadEl.textContent = lastUploadTime;
-   
+
 }
 showLastUploadTime();
+
 
