@@ -66,7 +66,7 @@ async function getRecentUploads() {
         }
     });
 
-    recentUploadsList.innerHTML = recentFiles.map(file => `<div class="upload-item"><div class="upload-item__content"><img class="upload-item__img" src="/img/${fileTypes[file.type]}"><div class="upload-item__name-time-wrapper"><p class="upload-item__name">${file.name}</p><p class="upload-item__time">${file.time}</p></div></div><div class="upload-item__content-size"> <p class="upload-item__size">${file.size}</p><button class="upload-item__btn"></button></div></div>`).join('');
+    recentUploadsList.innerHTML = recentFiles.map(file => `<div class="upload-item"><div class="upload-item__content"><img class="upload-item__img" src="${getIconForFileType(file.type)}"><div class="upload-item__name-time-wrapper"><p class="upload-item__name">${file.name}</p><p class="upload-item__time">${file.time}</p></div></div><div class="upload-item__content-size"> <p class="upload-item__size">${file.size}</p><button class="upload-item__btn"></button></div></div>`).join('');
 }
 
 
@@ -165,10 +165,10 @@ function handleFileDrop(event) {
 
 
 const fileTypes = {
-    'image/png': './image.svg',
-    'image/jpeg': './img/image.svg',
+    'image/png': '/image.svg',
+    'image/jpeg': '/img/image.svg',
     'image/svg': './img/image.svg',
-    'application/pdf': './img/PDF.svg',
+    'application/pdf': 'img/PDF.svg',
     'application/folder': './img/folder.svg',
     'application/doc': 'img/document.svg',
     'text/plain': 'img/document.svg',
@@ -336,7 +336,7 @@ async function handleViewAll() {
     });
     // Clear recent/add all uploads
     recentUploadsList.innerHTML = '';
-    recentUploadsList.innerHTML = allUploads.map(file => `<div class="upload-item"><div class="upload-item__content"><img class="upload-item__img" src="/img/${fileTypes[file.type]}"><div class="upload-item__name-time-wrapper"><p class="upload-item__name">${file.name}</p><p class="upload-item__time">${file.time}</p></div></div><div class="upload-item__content-size"> <p class="upload-item__size">${file.size}</p><button class="upload-item__btn"></button></div></div>`).join('');
+    recentUploadsList.innerHTML = allUploads.map(file => `<div class="upload-item"><div class="upload-item__content"><img class="upload-item__img" src="${getIconForFileType(file.type)}"><div class="upload-item__name-time-wrapper"><p class="upload-item__name">${file.name}</p><p class="upload-item__time">${file.time}</p></div></div><div class="upload-item__content-size"> <p class="upload-item__size">${file.size}</p><button class="upload-item__btn"></button></div></div>`).join('');
 }
 
 
