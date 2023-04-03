@@ -165,9 +165,9 @@ function handleFileDrop(event) {
 
 
 const fileTypes = {
-    'image/jpeg': '/img/image.svg',
-    'image/svg': './img/image.svg',
-    'image/png': 'img/image.svg',
+    'image/jpeg': '/image.svg',
+    'image/svg': './image.svg',
+    'image/png': 'image.svg',
     'application/pdf': './/img/PDF.svg',
     'application/folder': './img/folder.svg',
     'application/doc': 'img/document.svg',
@@ -178,9 +178,9 @@ const fileTypes = {
 function getIconForFileType(fileType) {
     const iconFileName = fileTypes[fileType];
     if (iconFileName) {
-        return `/${iconFileName}`;
+        return `./img/${iconFileName}`;
     } else {
-        return '/img/document.svg';
+        return './img/document.svg';
     }
 }
 
