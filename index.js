@@ -45,6 +45,7 @@ showTab('new-upload');
 
 const recentlyUploadedFiles = [];
 
+
 async function getRecentUploads() {
     const q = query(collection(db, "files"), orderBy("date", "desc"));
     const querySnapshot = await getDocs(q);
@@ -61,7 +62,7 @@ async function getRecentUploads() {
             count++;
         }
         // Show recent 5 uploads
-        if (count >= 5) {
+        if (count >= 5)recentFiles.length = 5; {
             return;
         }
     });
