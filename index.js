@@ -168,7 +168,7 @@ const fileTypes = {
     'image/jpeg': '/img/image.svg',
     'image/svg': './img/image.svg',
     'image/png': 'img/image.svg',
-    'application/pdf': 'img/PDF.svg',
+    'application/pdf': './/img/PDF.svg',
     'application/folder': './img/folder.svg',
     'application/doc': 'img/document.svg',
     'text/plain': 'img/document.svg',
