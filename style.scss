@@ -359,6 +359,9 @@ h2 {
             border-color: transparent #4353ff transparent transparent;
             width: 0;
             height: 0;
+            @media screen and (max-width: 350px) {
+                top: 1em;
+            }
         }
         &::after {
             display: block;
@@ -373,6 +376,9 @@ h2 {
             border-color: transparent rgb(255, 255, 255) transparent transparent;
             width: 0;
             height: 0;
+            @media screen and (max-width: 350px) {
+                top: 1em;
+            }
         }
     }
 }
