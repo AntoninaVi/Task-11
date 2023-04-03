@@ -38,8 +38,6 @@ dropZone.addEventListener('drop', handleDrop);
 fileInput.addEventListener('change', handleFileSelect);
 viewAllButton.addEventListener('click', handleViewAll);
 
-// Show New
-showTab('new-upload');
 
 
 
