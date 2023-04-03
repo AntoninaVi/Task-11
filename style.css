@@ -113,12 +113,15 @@ h2 {
   padding: 20px;
   text-align: center;
   cursor: pointer;
+  height: 17em;
 }
 
 .drop-zone__input {
   color: transparent;
-  max-width: 20em;
+  max-width: 9em;
   width: 100%;
+  margin-top: 7em;
+  text-align: center;
 }
 
 .drop-zone__input::-webkit-file-upload-button {
@@ -127,6 +130,7 @@ h2 {
 
 .drop-zone__input::before {
   content: "Click to browse or drag and drop your files";
+  display: block;
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
@@ -136,6 +140,7 @@ h2 {
   opacity: 0.5;
   -webkit-user-select: none;
   cursor: pointer;
+  white-space: pre-wrap;
 }
 
 .uploads {
