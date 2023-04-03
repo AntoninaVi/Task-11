@@ -414,8 +414,8 @@ h2 {
   height: 0px;
   position: absolute;
   top: 0.6em;
-  left: -1.5em;
-  border-width: 8px;
+  left: -1.4em;
+  border-width: 7px;
   border-style: solid;
   border-color: transparent #4353ff transparent transparent;
   width: 0;
@@ -429,7 +429,7 @@ h2 {
   position: absolute;
   top: 0.6em;
   left: -1.2em;
-  border-width: 8px;
+  border-width: 7px;
   border-style: solid;
   border-color: transparent rgb(255, 255, 255) transparent transparent;
   width: 0;
