@@ -186,11 +186,11 @@ function getIconForFileType(fileType) {
 
 //  Add file
 function addUploadToList(file) {
-    // Find existing wrapper
+
     const existingWrapper = uploadsList.querySelector(`[data-name="${file.name}"]`);
 
     if (existingWrapper) {
-        //Wrapper exists -> update
+        // exists -> update
         const sizeElem = existingWrapper.querySelector('.upload-item__size');
         sizeElem.innerText = formatBytes(file.size);
 
@@ -200,7 +200,7 @@ function addUploadToList(file) {
         const iconElem = existingWrapper.querySelector('.upload-item__img');
         iconElem.src = getIconForFileType(file.type);
     } else {
-        // If wrapper doesn't exist -> create
+        //  doesn't exist -> create
         const uploadItem = document.createElement('div');
         uploadItem.className = 'upload-item';
         uploadItem.setAttribute('data-name', file.name);
