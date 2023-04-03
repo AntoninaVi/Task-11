@@ -169,9 +169,9 @@ const fileTypes = {
     'image/svg': '/image.svg',
     'image/png': '/image.svg',
     'application/pdf': 'pdf.svg',
-    'application/folder': '/img/folder.svg',
-    'application/doc': '/img/document.svg',
-    'text/plain': '/img/document.svg',
+    'application/folder': '/folder.svg',
+    'application/doc': '/document.svg',
+    'text/plain': '/document.svg',
 };
 
 //Icons for each file
