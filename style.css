@@ -395,6 +395,7 @@ h2 {
   transition: 0.3s;
 }
 .storage__link-offer {
+  position: relative;
   font-style: normal;
   font-weight: 700;
   font-size: 11px;
@@ -405,6 +406,34 @@ h2 {
   border: 2px solid #4353ff;
   border-radius: 4px;
   padding: 8.5px 12px;
+}
+.storage__link-offer::before {
+  display: block;
+  content: "";
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  top: 0.6em;
+  left: -1.5em;
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent #4353ff transparent transparent;
+  width: 0;
+  height: 0;
+}
+.storage__link-offer::after {
+  display: block;
+  content: "";
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  top: 0.6em;
+  left: -1.2em;
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent rgb(255, 255, 255) transparent transparent;
+  width: 0;
+  height: 0;
 }
 
 .actions__article {
