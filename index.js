@@ -60,7 +60,7 @@ async function getRecentUploads() {
             count++;
         }
         // Show recent 5 uploads
-        if (count >= 5)recentFiles.length = 5; {
+        if (count >= 5) recentFiles.length = 5; {
             return;
         }
     });
@@ -361,13 +361,23 @@ async function getLastUploadTime() {
             return 'just now';
         } else if (minutesDiff === 1) {
             return '1 minute ago';
-        } else {
+        } else if (minutesDiff < 60) {
             return `${minutesDiff} minutes ago`;
+        } else if (minutesDiff < 1440) {
+            const hoursDiff = Math.floor(minutesDiff / 60);
+            return `${hoursDiff} hour${hoursDiff === 1 ? '' : 's'} ago`;
+        } else {
+            const daysDiff = Math.floor(minutesDiff / 1440);
+            const dateStr = lastUploadTime.toLocaleDateString();
+            const timeStr = lastUploadTime.toLocaleTimeString();
+            return `${daysDiff} day${daysDiff === 1 ? '' : 's'} ago on ${dateStr} at ${timeStr}`;
         }
     } else {
         return 'never';
     }
 }
+
+
 // Show last upload time
 async function showLastUploadTime() {
     const lastUploadTime = await getLastUploadTime();

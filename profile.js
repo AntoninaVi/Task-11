@@ -22,6 +22,7 @@ const fileCollectionRef = collection(db, 'files');
 
 
 // Get last upload time
+// Get last upload time
 async function getLastUploadTime() {
     const q = query(collection(db, "files"), orderBy("date", "desc"));
     const querySnapshot = await getDocs(q);
@@ -34,13 +35,22 @@ async function getLastUploadTime() {
             return 'just now';
         } else if (minutesDiff === 1) {
             return '1 minute ago';
-        } else {
+        } else if (minutesDiff < 60) {
             return `${minutesDiff} minutes ago`;
+        } else if (minutesDiff < 1440) {
+            const hoursDiff = Math.floor(minutesDiff / 60);
+            return `${hoursDiff} hour${hoursDiff === 1 ? '' : 's'} ago`;
+        } else {
+            const daysDiff = Math.floor(minutesDiff / 1440);
+            const dateStr = lastUploadTime.toLocaleDateString();
+            const timeStr = lastUploadTime.toLocaleTimeString();
+            return `${daysDiff} day${daysDiff === 1 ? '' : 's'} ago on ${dateStr} at ${timeStr}`;
         }
     } else {
         return 'never';
     }
 }
+
 // Show last upload time
 async function showLastUploadTime() {
     const lastUploadTime = await getLastUploadTime();
