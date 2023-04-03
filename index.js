@@ -166,9 +166,9 @@ function handleFileDrop(event) {
 
 const fileTypes = {
     'image/jpeg': '/image.svg',
-    'image/svg': './image.svg',
+    'image/svg': '/image.svg',
     'image/png': '/image.svg',
-    'application/pdf': '/img/PDF.svg',
+    'application/pdf': '/pdf.svg',
     'application/folder': '/img/folder.svg',
     'application/doc': 'img/document.svg',
     'text/plain': 'img/document.svg',
