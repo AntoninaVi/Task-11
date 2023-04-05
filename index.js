@@ -188,7 +188,7 @@ const fileTypes = {
 function getIconForFileType(fileType) {
     const iconFileName = fileTypes[fileType];
     if (iconFileName) {
-        return `/img/${iconFileName}`;
+        return `./img/${iconFileName}`;
     } else {
         return './img/document.svg';
     }
