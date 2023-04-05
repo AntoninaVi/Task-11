@@ -350,17 +350,6 @@ async function uploadFileToDatabase(file) {
 //         return Math.round(elapsed / 86400) + " days ago";
 //     }
 // }
-// function formatTimeAgo(date) {
-//     const elapsed = (new Date() - date) / 1000;
-//     switch (new Date().getDay()) {
-//         case elapsed < 60:
-//             Math.round(elapsed) + " seconds ago"
-//             break;
-//         case elapsed < 3600:
-//             Math.round(elapsed / 60) + " minutes ago"
-//             break;
-
-//     }
 
 // }
 
