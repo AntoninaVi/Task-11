@@ -129,7 +129,7 @@ async function handleFiles(files) {
     document.getElementById('loader').classList.remove('hidden');
     await new Promise(resolve =>
     setTimeout(resolve, 2000));
-
+    
     document.getElementById('loader').classList.add('hidden');
 
 
@@ -178,7 +178,7 @@ const fileTypes = {
     'image/jpeg': '/image.svg',
     'image/svg': '/image.svg',
     'image/png': '/image.svg',
-    'application/pdf': '/image.svg',
+    'application/pdf': '/pdf.svg',
     'application/folder': '/folder.svg',
     'application/doc': '/document.svg',
     'text/plain': '/document.svg',
@@ -350,6 +350,17 @@ async function uploadFileToDatabase(file) {
 //         return Math.round(elapsed / 86400) + " days ago";
 //     }
 // }
+// function formatTimeAgo(date) {
+//     const elapsed = (new Date() - date) / 1000;
+//     switch (new Date().getDay()) {
+//         case elapsed < 60:
+//             Math.round(elapsed) + " seconds ago"
+//             break;
+//         case elapsed < 3600:
+//             Math.round(elapsed / 60) + " minutes ago"
+//             break;
+
+//     }
 
 // }
 
