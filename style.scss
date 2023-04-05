@@ -431,3 +431,45 @@ progress::-webkit-progress-value {
     border-bottom-left-radius: 24px;
     border-bottom-right-radius: 24px;
 }
+
+
+// LOADER
+#loader {
+    position: absolute;
+    z-index: 10;
+    display: block;
+    width: 16em;
+    height: 16em;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 28em;
+    border-radius: 10rem;
+    border: 2px solid white;
+    background: linear-gradient(#7a5edd, #b53eec, #e452ae, #e3b419, #92ee19, #52bde4);
+    box-shadow: 0px 0px 100px -50px black;
+    animation: animate 1s linear infinite;
+}
+#loader::before {
+    position: absolute;
+    content: "";
+    background: #fff;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 80%;
+    border-radius: 10rem;
+    border: 2px solid white;
+    box-shadow: inset 0px 0px 100px -70px #111;
+}
+@keyframes animate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+.hidden {
+    display: none !important;
+}

@@ -30,6 +30,8 @@ const recentTab = document.getElementById('recent')
 const viewAllButton = document.getElementById('view-all-btn');
 const syncedTime = document.getElementById('time-synced');
 
+const loader = document.getElementById('loader');
+
 // Event listeners
 tabButtons.forEach(button => button.addEventListener('click', handleTabClick));
 dropZone.addEventListener('dragover', handleDragOver);
@@ -45,8 +47,8 @@ const recentlyUploadedFiles = [];
 
 
 async function getRecentUploads() {
-    const q = query(collection(db, "files"), orderBy("date", "desc"));
-    const querySnapshot = await getDocs(q);
+    const filesQuery = query(collection(db, "files"), orderBy("date", "desc"));
+    const querySnapshot = await getDocs(filesQuery);
     recentUploadsList.innerHTML = '';
     let count = 0;
     const recentFiles = [];
@@ -118,13 +120,21 @@ function handleFileSelect(event) {
     event.preventDefault();
     const files = event.target.files;
     handleFiles(files);
+
 }
 
 async function handleFiles(files) {
 
+    // Loader
+    document.getElementById('loader').classList.remove('hidden');
+    await new Promise(resolve =>
+    setTimeout(resolve, 2000));
+
+    document.getElementById('loader').classList.add('hidden');
+
+
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
-
         if (!file.type) {
             alert('This file has no type!');
             continue;
@@ -142,7 +152,7 @@ async function handleFiles(files) {
         // Show Recent tab
         showTab('recent');
         // Get recent uploads and show
-        await getRecentUploads();
+        // await getRecentUploads();
         // Hide other tabs
         tabContents.forEach(content => {
             if (content.id !== 'recent') {
@@ -152,6 +162,7 @@ async function handleFiles(files) {
     }
     // Clear file input
     fileInput.value = '';
+
 }
 
 //drag drop event
@@ -266,15 +277,34 @@ function formatDate(timestamp) {
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
-    if (days > 0) {
-        return `${days} ${days > 1 ? 'days' : 'day'} ago`;
-    } else if (hours > 0) {
-        return `${hours} ${hours > 1 ? 'hours' : 'hour'} ago`;
-    } else if (minutes > 0) {
-        return `${minutes} ${minutes > 1 ? 'minutes' : 'minute'} ago`;
-    } else {
-        return `${seconds} ${seconds > 1 ? 'seconds' : 'second'} ago`;
+
+
+    // if (days > 0) {
+    //     return `${days} ${days > 1 ? 'days' : 'day'} ago`;
+    // } else if (hours > 0) {
+    //     return `${hours} ${hours > 1 ? 'hours' : 'hour'} ago`;
+    // } else if (minutes > 0) {
+    //     return `${minutes} ${minutes > 1 ? 'minutes' : 'minute'} ago`;
+    // } else {
+    //     return `${seconds} ${seconds > 1 ? 'seconds' : 'second'} ago`;
+    // }
+    let result;
+    switch (true) {
+        case days > 0:
+            result = `${days} ${days > 1 ? 'days' : 'day'} ago`;
+            break;
+        case hours > 0:
+            result = `${hours} ${hours > 1 ? 'hours' : 'hour'} ago`;
+            break;
+        case minutes > 0:
+            result = `${minutes} ${minutes > 1 ? 'minutes' : 'minute'} ago`;
+            break;
+        default:
+            result = `${seconds} ${seconds > 1 ? 'seconds' : 'second'} ago`;
+            break;
     }
+    return result;
+
 }
 
 
@@ -296,37 +326,41 @@ async function uploadFileToDatabase(file) {
 
 
 // format file size 
-function formatFileSize(bytes) {
-    const units = ["B", "KB", "MB", "GB", "TB"];
-    let size = bytes;
-    let unitIndex = 0;
-    while (size >= 1024 && unitIndex < units.length - 1) {
-        size /= 1024;
-        unitIndex++;
-    }
-    return size.toFixed(1) + " " + units[unitIndex];
-}
+// function formatFileSize(bytes) {
+//     const units = ["B", "KB", "MB", "GB", "TB"];
+//     let size = bytes;
+//     let unitIndex = 0;
+//     while (size >= 1024 && unitIndex < units.length - 1) {
+//         size /= 1024;
+//         unitIndex++;
+//     }
+//     return size.toFixed(1) + " " + units[unitIndex];
+// }
 
 
-function formatTimeAgo(date) {
-    const elapsed = (new Date() - date) / 1000;
-    if (elapsed < 60) {
-        return Math.round(elapsed) + " seconds ago";
-    } else if (elapsed < 3600) {
-        return Math.round(elapsed / 60) + " minutes ago";
-    } else if (elapsed < 86400) {
-        return Math.round(elapsed / 3600) + " hours ago";
-    } else {
-        return Math.round(elapsed / 86400) + " days ago";
-    }
-}
+// function formatTimeAgo(date) {
+//     const elapsed = (new Date() - date) / 1000;
+//     if (elapsed < 60) {
+//         return Math.round(elapsed) + " seconds ago";
+//     } else if (elapsed < 3600) {
+//         return Math.round(elapsed / 60) + " minutes ago";
+//     } else if (elapsed < 86400) {
+//         return Math.round(elapsed / 3600) + " hours ago";
+//     } else {
+//         return Math.round(elapsed / 86400) + " days ago";
+//     }
+// }
+// }
+
+
+
 
 
 
 async function handleViewAll() {
     // get uploads from database
-    const q = query(collection(db, "files"), orderBy("date", "desc"));
-    const querySnapshot = await getDocs(q);
+    const filesQuery = query(collection(db, "files"), orderBy("date", "desc"));
+    const querySnapshot = await getDocs(filesQuery);
     const allUploads = [];
     querySnapshot.forEach((doc) => {
         const data = doc.data();
@@ -350,30 +384,53 @@ window.addEventListener('load', async () => {
 
 // Get last upload time
 async function getLastUploadTime() {
-    const q = query(collection(db, "files"), orderBy("date", "desc"));
-    const querySnapshot = await getDocs(q);
+    const filesQuery = query(collection(db, "files"), orderBy("date", "desc"));
+    const querySnapshot = await getDocs(filesQuery);
     if (querySnapshot.size > 0) {
         const lastUploadTime = querySnapshot.docs[0].data().date.toDate();
         const currentTime = new Date();
         const timeDiff = currentTime.getTime() - lastUploadTime.getTime();
         const minutesDiff = Math.floor(timeDiff / (1000 * 60));
-        if (minutesDiff === 0) {
-            return 'just now';
-        } else if (minutesDiff === 1) {
-            return '1 minute ago';
-        } else if (minutesDiff < 60) {
-            return `${minutesDiff} minutes ago`;
-        } else if (minutesDiff < 1440) {
-            const hoursDiff = Math.floor(minutesDiff / 60);
-            return `${hoursDiff} hour${hoursDiff === 1 ? '' : 's'} ago`;
-        } else {
-            const daysDiff = Math.floor(minutesDiff / 1440);
-            const dateStr = lastUploadTime.toLocaleDateString();
-            const timeStr = lastUploadTime.toLocaleTimeString();
-            return `${daysDiff} day${daysDiff === 1 ? '' : 's'} ago on ${dateStr} at ${timeStr}`;
+
+        let result;
+        //     if (minutesDiff === 0) {
+        //         return 'just now';
+        //     } else if (minutesDiff === 1) {
+        //         return '1 minute ago';
+        //     } else if (minutesDiff < 60) {
+        //         return `${minutesDiff} minutes ago`;
+        //     } else if (minutesDiff < 1440) {
+        //         const hoursDiff = Math.floor(minutesDiff / 60);
+        //         return `${hoursDiff} hour${hoursDiff === 1 ? '' : 's'} ago`;
+        //     } else {
+        //         const daysDiff = Math.floor(minutesDiff / 1440);
+        //         const dateStr = lastUploadTime.toLocaleDateString();
+        //         const timeStr = lastUploadTime.toLocaleTimeString();
+        //         return `${daysDiff} day${daysDiff === 1 ? '' : 's'} ago on ${dateStr} at ${timeStr}`;
+        //     }
+        // } else {
+        //     return 'never';
+        const hoursDiff = Math.floor(minutesDiff / 60);
+        switch (true) {
+            case minutesDiff === 0:
+                result = 'just now';
+                break;
+            case minutesDiff === 1:
+                result = '1 minute ago';
+                break;
+            case minutesDiff < 60:
+                result = `${minutesDiff} minutes ago`;
+                break;
+            case minutesDiff < 1440:
+                result = `${hoursDiff} hour${hoursDiff === 1 ? '' : 's'} ago`;
+                break;
+            default:
+                const daysDiff = Math.floor(minutesDiff / 1440);
+                const dateStr = lastUploadTime.toLocaleDateString();
+                const timeStr = lastUploadTime.toLocaleTimeString();
+                result = `${daysDiff} day${daysDiff === 1 ? '' : 's'} ago on ${dateStr} at ${timeStr}`;
         }
-    } else {
-        return 'never';
+        return result;
     }
 }
 
