@@ -178,7 +178,7 @@ const fileTypes = {
     'image/jpeg': '/image.svg',
     'image/svg': '/image.svg',
     'image/png': '/image.svg',
-    'pdf': '/pdf.svg',
+    'application/pdf': 'pdf.svg',
     'application/folder': '/folder.svg',
     'application/doc': '/document.svg',
     'text/plain': '/document.svg',
@@ -350,6 +350,7 @@ async function uploadFileToDatabase(file) {
 //         return Math.round(elapsed / 86400) + " days ago";
 //     }
 // }
+
 // }
 
 
